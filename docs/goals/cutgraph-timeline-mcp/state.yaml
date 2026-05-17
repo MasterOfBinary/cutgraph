@@ -1,0 +1,554 @@
+# GoalBuddy v2 state.yaml
+# Board truth lives here. goal.md is the editable charter; notes/ holds long receipts only.
+
+version: 2
+
+goal:
+  title: "CutGraph Timeline MCP"
+  slug: "cutgraph-timeline-mcp"
+  kind: existing_plan
+  tranche: "Validate and implement the requested CutGraph MCP MVP with source-backed command research, separate docs, timeline docs, and full verification."
+  status: complete
+  intake:
+    original_request: "Build the CutGraph Timeline MCP plan, with deep command research, separate developer/user docs, and MVP/future timeline documentation."
+    interpreted_outcome: "A working Python 3.12 uv-managed CutGraph MCP server and CLI exists for non-destructive video editing, backed by researched FFmpeg/ffprobe/OTIO implementation choices and documented for developers and users."
+    input_shape: existing_plan
+    audience: "Developers and local MCP users of CutGraph."
+    authority: requested
+    proof_type: test
+    completion_proof: "Requested MCP tools and CLI commands are implemented, source-backed implementation research is recorded, developer/user/timeline docs are separate, and schema, timeline, security, media, render planner, integration, and MCP smoke tests pass or skip with explicit FFmpeg/ffprobe availability reasons."
+    likely_misfire: "Delivering a scaffold or generic FFmpeg wrapper without validating command feasibility, path safety, docs separation, render-plan explainability, and non-destructive project semantics."
+    blind_spots_considered:
+      - "Which requested commands map directly to FFmpeg/ffprobe versus custom CutGraph timeline/project logic."
+      - "MCP Python SDK/FastMCP API details may have changed and must be checked against official docs."
+      - "FFmpeg filters can cover many operations but some edits require planner-generated filter graphs and structured project logic."
+      - "Path allowlisting and argv-only command generation must be tested, not just documented."
+      - "OpenTimelineIO should remain optional and export-first in v0."
+      - "Real FFmpeg integration tests must skip cleanly when binaries are unavailable."
+    existing_plan_facts:
+      - "Create a Python package in src/cutgraph/ with modules for schema, project store, media probing, timeline operations, render planning, render jobs, CLI, and MCP server."
+      - "Use Python 3.12 and uv with dependencies on MCP Python SDK, Pydantic, Typer, Rich, optional OpenTimelineIO, and pytest tooling."
+      - "Define .cutgraph.json v0.1 with settings, assets, timelines, nodes, and renders."
+      - "Enforce project-root path allowlisting; render outputs under renders/ and cache/proxies under .cutgraph/cache/."
+      - "Expose MCP tools for project lifecycle, assets/probing, timeline editing, transitions/overlays/PiP/subtitles, rendering, render status/cancel, and OTIO export."
+      - "Expose CLI commands: validate, probe, dry-run, render, and mcp."
+      - "Render planner emits argv arrays, never shell strings, and returns explainable plans."
+      - "v0 requires users to install FFmpeg/ffprobe separately and returns actionable missing-binary errors."
+      - "No UI, no public raw execute_ffmpeg, no CapCut/Premiere parity in v0."
+      - "References to validate include MCP Python SDK/docs, FFmpeg docs/filters, and OpenTimelineIO timeline structure docs."
+
+rules:
+  pm_owns_state: true
+  one_active_task: true
+  max_write_workers: 1
+  no_implementation_without_worker_or_pm_task: true
+  no_completion_without_judge_or_pm_audit: true
+  planning_is_not_completion: true
+  queued_required_worker_blocks_completion: true
+  continuous_until_full_outcome: true
+  missing_input_or_credentials_do_not_stop_goal: true
+  preserve_and_validate_existing_plan: true
+  intake_misfire_must_be_audited: true
+  slice_policy:
+    max_consecutive_tiny_tasks: 2
+    prefer_vertical_slices: true
+    judge_picks_largest_safe_slice: true
+    worker_completes_whole_slice: true
+
+agents:
+  scout: bundled_not_installed
+  worker: bundled_not_installed
+  judge: bundled_not_installed
+
+visual_board:
+  selected: local
+  local:
+    status: live
+    url: "http://goalbuddy.localhost:41737/cutgraph-timeline-mcp/"
+    command: "npx goalbuddy board docs/goals/cutgraph-timeline-mcp"
+  github_projects:
+    status: not_requested
+    url: null
+    command: "npx goalbuddy extend github-projects"
+    missing: []
+
+active_task: null
+
+tasks:
+  - id: T001
+    type: scout
+    assignee: Scout
+    status: done
+    reasoning_hint: high
+    objective: "Create a source-backed implementation research matrix for every requested MCP tool and CLI command."
+    inputs:
+      - "User-provided CutGraph Timeline MCP plan in the chat."
+      - "Official MCP Python SDK and FastMCP documentation."
+      - "Official FFmpeg documentation and ffmpeg-filters documentation."
+      - "Official ffprobe documentation."
+      - "OpenTimelineIO timeline structure and adapter/export documentation."
+    constraints:
+      - "Read-only."
+      - "Do not edit implementation or docs files."
+      - "Use primary/official sources when researching technical APIs and command behavior."
+      - "For each command/tool family, state whether FFmpeg/ffprobe/OTIO directly supports it, whether CutGraph must implement project/timeline logic, or whether a filtergraph/planner layer is required."
+      - "Record citations or exact source URLs in the note, with dates checked when browsing."
+      - "Explicitly answer examples like whether trim is supported by FFmpeg and what CutGraph must implement around it."
+    expected_output:
+      - "Research matrix covering all public MCP tools and CLI commands."
+      - "Dependency decision table: FFmpeg, ffprobe, MCP SDK, Pydantic, Typer, Rich, OpenTimelineIO, and any rejected dependencies."
+      - "Implementation notes for trim, split, move, delete, concat, overlays, transitions, PiP, subtitles, preview render, final render, render status/cancel, and OTIO export."
+      - "Risks or uncertainties that need Judge decision before coding."
+      - "A long-form note at docs/goals/cutgraph-timeline-mcp/notes/T001-command-research.md if findings do not fit on the card."
+    receipt:
+      result: done
+      summary: "Created source-backed research matrix at docs/goals/cutgraph-timeline-mcp/notes/T001-command-research.md covering MCP/CLI tool families, dependencies, FFmpeg/ffprobe/OTIO capability boundaries, render/job semantics, and risks for Judge."
+      evidence:
+        - "Official MCP Python SDK/FastMCP docs checked."
+        - "Official FFmpeg/ffprobe command and filter docs checked."
+        - "Official OpenTimelineIO timeline/export docs checked."
+        - "Official uv, Pydantic, Typer, and Rich docs checked."
+      next: "Judge should validate the plan and approve the largest safe Worker implementation slices."
+
+  - id: T002
+    type: judge
+    assignee: Judge
+    status: done
+    reasoning_hint: high
+    objective: "Validate the user-provided plan against T001 research and choose the implementation sequence."
+    inputs:
+      - "T001 receipt and research note."
+      - "docs/goals/cutgraph-timeline-mcp/goal.md"
+      - "docs/goals/cutgraph-timeline-mcp/state.yaml"
+    constraints:
+      - "Read-only."
+      - "Do not implement."
+      - "Preserve the user's plan unless research proves a change is needed."
+      - "Choose the largest safe useful Worker slices with allowed_files, verify commands, and stop conditions."
+    expected_output:
+      - "Decision: approved, approved_with_changes, or blocked."
+      - "MVP scope confirmation and future-phase boundaries."
+      - "Any plan corrections required by source-backed research."
+      - "Updated Worker slice recommendations if current queued tasks should be changed."
+      - "Specific verification strategy for local and FFmpeg-conditional tests."
+    receipt:
+      result: approved_with_changes
+      summary: "Plan is sound for v0 if implementation keeps OTIO optional, treats FFmpeg build-dependent filters as detected/render-time capabilities, and compiles operations through a planner rather than exposing raw execution."
+      mvp_scope:
+        - "Keep .cutgraph.json as source of truth with project-root allowlisting."
+        - "Implement MCP tools and CLI commands as structured project mutations plus render-plan/execution surfaces."
+        - "Use ffprobe for probing and FFmpeg argv plans for rendering."
+        - "Represent overlays, PiP, subtitles, and transitions as planner-backed node types with explicit unsupported-case errors."
+      changes:
+        - "Transition support must include compatibility checks or deterministic planner rejection before render execution."
+        - "drawtext/subtitles features must document and test FFmpeg build variance."
+        - "OTIO export should be optional and export-first, with no core dependency failure when OpenTimelineIO is absent."
+      implementation_sequence:
+        - "T003 scaffold/schema/store/security/validate CLI is the right first Worker slice."
+        - "T004 should add probe and non-destructive timeline mutation behavior before planner execution."
+        - "T005/T006 should separate dry-run planning from process execution and integration checks."
+        - "T007 should add MCP/OTIO only after core behavior is stable."
+        - "T008/T009/T999 remain appropriate docs, hardening, and audit slices."
+      verification_strategy:
+        - "Unit tests for schema, store, path safety, timeline operations, render plan argv shape, MCP registration, and OTIO optional handling."
+        - "FFmpeg/ffprobe integration tests should skip with explicit reasons when binaries are missing."
+        - "CLI help commands must run through uv once package metadata exists."
+      next: "Activate T003 Worker."
+
+  - id: T003
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Scaffold the uv-managed Python package, core schema, project store, path safety, and basic validation CLI."
+    allowed_files:
+      - "pyproject.toml"
+      - "README.md"
+      - "src/cutgraph/**"
+      - "tests/**"
+      - "docs/cutgraph/**"
+    verify:
+      - "uv run pytest tests"
+      - "uv run cutgraph validate --help"
+      - "uv run python -m cutgraph.cli validate --help"
+    stop_if:
+      - "T001/T002 indicates the package/dependency plan must change materially."
+      - "Need files outside allowed_files."
+      - "uv cannot create or run the environment after retrying with the approved dependency path."
+      - "Validation semantics are ambiguous enough to affect schema compatibility."
+    receipt:
+      result: done
+      summary: "Scaffolded uv package, core Pydantic schema, project store, project-root path policy, and validate CLI."
+      files:
+        - "pyproject.toml"
+        - "src/cutgraph/__init__.py"
+        - "src/cutgraph/schema.py"
+        - "src/cutgraph/security.py"
+        - "src/cutgraph/store.py"
+        - "src/cutgraph/cli.py"
+        - "tests/test_schema.py"
+        - "tests/test_security.py"
+        - "tests/test_store.py"
+        - "tests/test_cli_validate.py"
+      verification:
+        - command: "uv run pytest tests"
+          result: "10 passed"
+        - command: "uv run cutgraph validate --help"
+          result: "passed"
+        - command: "uv run python -m cutgraph.cli validate --help"
+          result: "passed"
+      notes:
+        - "TDD red observed on missing modules before implementation."
+        - "Typer command-group behavior was debugged and fixed with a root callback so `cutgraph validate` remains the public shape."
+      next: "Activate T004 Worker for asset probing, timeline operations, schema validation rules, and non-destructive mutation tests."
+
+  - id: T004
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Implement asset probing, timeline operations, schema validation rules, and non-destructive mutation tests."
+    allowed_files:
+      - "src/cutgraph/**"
+      - "tests/**"
+      - "docs/cutgraph/**"
+    verify:
+      - "uv run pytest tests/test_schema*.py tests/test_timeline*.py tests/test_media*.py tests/test_security*.py"
+      - "uv run cutgraph probe --help"
+    stop_if:
+      - "Need render execution changes that belong in the planner/job slice."
+      - "Need files outside allowed_files."
+      - "ffprobe behavior cannot be mocked or detected cleanly."
+    receipt:
+      result: done
+      summary: "Implemented ffprobe-backed asset registration, non-destructive timeline clip operations, stricter schema reference validation, symlink-aware path safety, and probe CLI surface."
+      files:
+        - "src/cutgraph/media.py"
+        - "src/cutgraph/timeline.py"
+        - "src/cutgraph/schema.py"
+        - "src/cutgraph/security.py"
+        - "src/cutgraph/cli.py"
+        - "tests/test_media.py"
+        - "tests/test_timeline.py"
+        - "tests/test_schema.py"
+        - "tests/test_security.py"
+      verification:
+        - command: "uv run pytest tests/test_schema*.py tests/test_timeline*.py tests/test_media*.py tests/test_security*.py"
+          result: "13 passed"
+        - command: "uv run cutgraph probe --help"
+          result: "passed"
+      notes:
+        - "Probe tests use a fake runner to verify argv shape and JSON parsing without requiring ffprobe."
+        - "Timeline split/trim/move/delete tests verify source media bytes remain untouched."
+      next: "Activate T005 Worker for render planning and dry-run coverage."
+
+  - id: T005
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Implement render planning and dry-run coverage for trims, concat, text/image overlays, PiP, subtitles, transitions, preview, and final renders."
+    allowed_files:
+      - "src/cutgraph/**"
+      - "tests/**"
+      - "docs/cutgraph/**"
+    verify:
+      - "uv run pytest tests/test_render*.py tests/test_security*.py"
+      - "uv run cutgraph dry-run --help"
+      - "uv run pytest tests -k 'planner or dry_run or security'"
+    stop_if:
+      - "Planner would need shell-string execution."
+      - "A requested operation cannot be represented safely as argv plus filtergraph."
+      - "Need files outside allowed_files."
+    receipt:
+      result: done
+      summary: "Implemented dry-run render planner that compiles timeline clips, trim/atrim, concat, text overlays, image overlays, PiP, subtitles, transitions, preview scaling, and final output paths into FFmpeg argv arrays."
+      files:
+        - "src/cutgraph/render.py"
+        - "src/cutgraph/cli.py"
+        - "tests/test_render_planner.py"
+      verification:
+        - command: "uv run pytest tests/test_render*.py tests/test_security*.py"
+          result: "9 passed"
+        - command: "uv run cutgraph dry-run --help"
+          result: "passed"
+        - command: "uv run pytest tests -k 'planner or dry_run or security'"
+          result: "9 passed, 14 deselected"
+      notes:
+        - "Planner returns structured RenderPlan with argv, inputs, filtergraph, output path, and explanations."
+        - "No shell command string is generated."
+        - "Output path is constrained to the project render directory."
+      next: "Activate T006 Worker for render jobs, binary detection, render CLI flow, and FFmpeg-conditional integration tests."
+
+  - id: T006
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Implement render jobs, FFmpeg/ffprobe binary detection, CLI render/probe/dry-run flows, and FFmpeg-conditional integration tests."
+    allowed_files:
+      - "src/cutgraph/**"
+      - "tests/**"
+      - "docs/cutgraph/**"
+    verify:
+      - "uv run pytest tests"
+      - "uv run cutgraph render --help"
+      - "uv run cutgraph dry-run --help"
+      - "uv run pytest tests -m integration"
+    stop_if:
+      - "System FFmpeg/ffprobe missing behavior cannot be represented as clear skips/errors."
+      - "Render cancellation requires unsafe process management."
+      - "Need files outside allowed_files."
+    receipt:
+      result: done
+      summary: "Implemented binary detection, render job execution/status/cancel helpers, render CLI flow, and FFmpeg/ffprobe-conditional integration tests."
+      files:
+        - "src/cutgraph/binaries.py"
+        - "src/cutgraph/render_jobs.py"
+        - "src/cutgraph/cli.py"
+        - "tests/test_binaries.py"
+        - "tests/test_render_jobs.py"
+        - "tests/test_integration_ffmpeg.py"
+      verification:
+        - command: "uv run pytest tests"
+          result: "29 passed, 1 skipped"
+        - command: "uv run cutgraph render --help"
+          result: "passed"
+        - command: "uv run cutgraph dry-run --help"
+          result: "passed"
+        - command: "uv run pytest tests -m integration"
+          result: "1 skipped, 29 deselected"
+      notes:
+        - "Integration test skips when FFmpeg/ffprobe are unavailable on PATH."
+        - "Render execution stores completed/failed records in project.renders and raises actionable errors."
+      next: "Activate T007 Worker for MCP server tools and optional OTIO export."
+
+  - id: T007
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Implement MCP server tools and OTIO export, keeping OpenTimelineIO optional and export-first."
+    allowed_files:
+      - "pyproject.toml"
+      - "src/cutgraph/**"
+      - "tests/**"
+      - "docs/cutgraph/**"
+    verify:
+      - "uv run pytest tests/test_mcp*.py tests/test_otio*.py tests"
+      - "uv run cutgraph mcp --help"
+    stop_if:
+      - "MCP SDK APIs differ materially from researched assumptions."
+      - "OTIO optional dependency handling breaks core install/test path."
+      - "Need files outside allowed_files."
+    receipt:
+      result: done
+      summary: "Implemented FastMCP server tool registration and optional-boundary OTIO export."
+      files:
+        - "src/cutgraph/mcp_server.py"
+        - "src/cutgraph/otio_export.py"
+        - "src/cutgraph/cli.py"
+        - "tests/test_mcp_server.py"
+        - "tests/test_otio_export.py"
+      verification:
+        - command: "uv run pytest tests/test_mcp*.py tests/test_otio*.py tests"
+          result: "31 passed, 1 skipped"
+        - command: "uv run cutgraph mcp --help"
+          result: "passed"
+      notes:
+        - "MCP server registers project, asset/probe, timeline, overlay/PiP/subtitle/transition, render, status/cancel, and OTIO export tools."
+        - "OTIO export writes OTIO-shaped JSON without importing OpenTimelineIO at core import time."
+      next: "Activate T008 Worker for separate developer, user, and timeline docs."
+
+  - id: T008
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Write and verify separate developer docs, user docs, and timeline documentation for MVP and future phases."
+    allowed_files:
+      - "README.md"
+      - "docs/cutgraph/**"
+      - "docs/goals/cutgraph-timeline-mcp/notes/**"
+      - "tests/**"
+    verify:
+      - "uv run pytest tests"
+      - "test -f docs/cutgraph/developer.md"
+      - "test -f docs/cutgraph/user.md"
+      - "test -f docs/cutgraph/timeline.md"
+    stop_if:
+      - "Docs need to claim unsupported command behavior not backed by implementation or T001 research."
+      - "Need files outside allowed_files."
+    receipt:
+      result: done
+      summary: "Added separate developer, user, and MVP/future timeline documentation plus README links and command summary."
+      files:
+        - "README.md"
+        - "docs/cutgraph/developer.md"
+        - "docs/cutgraph/user.md"
+        - "docs/cutgraph/timeline.md"
+      verification:
+        - command: "uv run pytest tests"
+          result: "31 passed, 1 skipped"
+        - command: "test -f docs/cutgraph/developer.md"
+          result: "passed"
+        - command: "test -f docs/cutgraph/user.md"
+          result: "passed"
+        - command: "test -f docs/cutgraph/timeline.md"
+          result: "passed"
+      next: "Activate T009 Worker for final hardening and command smoke checks."
+
+  - id: T009
+    type: worker
+    assignee: Worker
+    status: done
+    reasoning_hint: medium
+    objective: "Run final implementation hardening: full tests, formatting/lint if configured, FFmpeg-conditional smoke renders, and README sanity checks."
+    allowed_files:
+      - "src/cutgraph/**"
+      - "tests/**"
+      - "README.md"
+      - "docs/cutgraph/**"
+      - "docs/goals/cutgraph-timeline-mcp/**"
+    verify:
+      - "uv run pytest tests"
+      - "uv run cutgraph validate --help"
+      - "uv run cutgraph probe --help"
+      - "uv run cutgraph dry-run --help"
+      - "uv run cutgraph render --help"
+      - "uv run cutgraph mcp --help"
+    stop_if:
+      - "Verification fails twice with the same root cause."
+      - "Need broad dependency or architecture changes not reviewed by Judge."
+      - "Need files outside allowed_files."
+    receipt:
+      result: done
+      summary: "Ran final hardening checks, CLI smoke help commands, integration marker check, and whitespace/cache cleanup."
+      verification:
+        - command: "uv run pytest tests"
+          result: "31 passed, 1 skipped"
+        - command: "uv run cutgraph validate --help"
+          result: "passed"
+        - command: "uv run cutgraph probe --help"
+          result: "passed"
+        - command: "uv run cutgraph dry-run --help"
+          result: "passed"
+        - command: "uv run cutgraph render --help"
+          result: "passed"
+        - command: "uv run cutgraph mcp --help"
+          result: "passed"
+        - command: "uv run pytest tests -m integration"
+          result: "1 skipped, 31 deselected"
+        - command: "git diff --check"
+          result: "passed"
+      notes:
+        - "No formatter or linter is configured in pyproject.toml beyond pytest settings."
+        - "Generated __pycache__ directories were removed after verification."
+      next: "Activate T999 final audit."
+
+  - id: T999
+    type: judge
+    assignee: Judge
+    status: done
+    reasoning_hint: high
+    objective: "Audit whether the full CutGraph Timeline MCP outcome is complete."
+    inputs:
+      - "All done task receipts."
+      - "T001 command research note."
+      - "Current dirty diff."
+      - "Last verification commands."
+      - "Developer, user, and timeline docs."
+    constraints:
+      - "Read-only."
+      - "Reject completion if any requested MCP tool or CLI command is missing without an explicit scoped deferral."
+      - "Reject completion if command implementation choices are not backed by T001 research."
+      - "Reject completion if developer docs, user docs, and timeline docs are not separate."
+      - "Reject completion if render commands are shell strings or path allowlisting is untested."
+      - "Reject completion if required Worker work is still queued or active."
+    expected_output:
+      - "complete | not_complete"
+      - "full_outcome_complete: true | false"
+      - "Mapping from user requirements to implemented files/tests/docs."
+      - "Missing evidence or next task if not complete."
+    receipt:
+      result: complete
+      full_outcome_complete: true
+      summary: "Final audit maps the original CutGraph Timeline MCP request to implemented package code, tests, source-backed research, and separate docs."
+      requirement_mapping:
+        - requirement: "Python 3.12 uv-managed package"
+          evidence:
+            - "pyproject.toml requires Python >=3.12 and defines the cutgraph script."
+            - "uv.lock was generated by uv verification."
+        - requirement: ".cutgraph.json is source of truth and source media remains untouched"
+          evidence:
+            - "src/cutgraph/schema.py defines settings/assets/timelines/nodes/renders."
+            - "src/cutgraph/store.py reads/writes .cutgraph.json."
+            - "tests/test_timeline.py verifies clip edits do not modify source media bytes."
+        - requirement: "Project-root path allowlisting and render/cache policy"
+          evidence:
+            - "src/cutgraph/security.py enforces project-root, renders/, and .cutgraph/cache/ boundaries."
+            - "tests/test_security.py covers traversal, render output policy, and symlink escape rejection."
+        - requirement: "ffprobe asset probing and FFmpeg render planning/execution"
+          evidence:
+            - "src/cutgraph/media.py probes with ffprobe argv and JSON parsing."
+            - "src/cutgraph/render.py emits explainable FFmpeg argv render plans."
+            - "src/cutgraph/render_jobs.py records completed/failed render jobs."
+            - "tests/test_media.py, tests/test_render_planner.py, tests/test_render_jobs.py."
+        - requirement: "MCP tools for lifecycle, assets, timeline edits, overlays/PiP/subtitles/transitions, rendering, status/cancel, and OTIO"
+          evidence:
+            - "src/cutgraph/mcp_server.py REQUIRED_TOOL_NAMES and @server.tool registrations cover all requested groups."
+            - "tests/test_mcp_server.py verifies the FastMCP tool registrations."
+        - requirement: "CLI validate, probe, dry-run, render, and mcp"
+          evidence:
+            - "src/cutgraph/cli.py implements each command."
+            - "Final CLI help smoke checks passed for all five commands."
+        - requirement: "OTIO export with optional dependency boundary"
+          evidence:
+            - "src/cutgraph/otio_export.py writes OTIO-shaped JSON without requiring OpenTimelineIO at import time."
+            - "tests/test_otio_export.py verifies export without optional dependency."
+        - requirement: "Separate developer docs, user docs, and MVP/future timeline docs"
+          evidence:
+            - "docs/cutgraph/developer.md"
+            - "docs/cutgraph/user.md"
+            - "docs/cutgraph/timeline.md"
+            - "README.md links the docs."
+        - requirement: "Source-backed implementation research"
+          evidence:
+            - "docs/goals/cutgraph-timeline-mcp/notes/T001-command-research.md"
+            - "T001/T002 receipts record source-backed plan validation before coding."
+      final_verification:
+        - command: "uv run pytest tests"
+          result: "31 passed, 1 skipped"
+        - command: "uv run cutgraph validate --help"
+          result: "passed"
+        - command: "uv run cutgraph probe --help"
+          result: "passed"
+        - command: "uv run cutgraph dry-run --help"
+          result: "passed"
+        - command: "uv run cutgraph render --help"
+          result: "passed"
+        - command: "uv run cutgraph mcp --help"
+          result: "passed"
+        - command: "uv run pytest tests -m integration"
+          result: "1 skipped, 31 deselected because FFmpeg/ffprobe are not installed on PATH"
+        - command: "git diff --check"
+          result: "passed"
+      residual_risk:
+        - "Real render smoke is skipped until FFmpeg/ffprobe are installed on PATH."
+        - "Planner has MVP-level compatibility checks; richer stream normalization is documented as future work."
+      next: "No required local work remains for this goal."
+
+checks:
+  dirty_fingerprint: "M README.md; untracked docs/, pyproject.toml, src/, tests/, uv.lock"
+  last_verification:
+    result: passed
+    task: T999
+    commands:
+      - "uv run pytest tests"
+      - "uv run cutgraph validate --help"
+      - "uv run cutgraph probe --help"
+      - "uv run cutgraph dry-run --help"
+      - "uv run cutgraph render --help"
+      - "uv run cutgraph mcp --help"
+      - "uv run pytest tests -m integration"
+      - "git diff --check"
